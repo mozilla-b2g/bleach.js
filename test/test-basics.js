@@ -68,7 +68,7 @@ describe('bleach', function () {
           , attrs = {span: ['style']}
           , html = 'a <br/><span style="color:red">test</span>';
         bleach.clean(html, {tags: tags, attributes: attrs})
-              .should.equal('a <br><span style="">test</span>');
+              .should.equal('a <br/><span style="">test</span>');
       });
 
       it('should strip out attributes, round 2', function () {
@@ -120,7 +120,7 @@ describe('bleach', function () {
 
       it('should handle weird strings', function () {
         var s = '</3';
-        bleach.clean(s).should.equal('');
+        bleach.clean(s).should.equal('&lt;/3');
       });
 
       it('should strip the **** outta some tags', function () {
@@ -174,7 +174,7 @@ describe('bleach', function () {
         var ATTR = {'*': ['id'], 'img': ['src'] }
           , TAG = ['img', 'em']
           , dirty = 'both <em id="foo" style="color: black">can</em> have <img id="bar" src="foo"/>'
-          , clean = 'both <em id="foo">can</em> have <img id="bar" src="foo">';
+          , clean = 'both <em id="foo">can</em> have <img id="bar" src="foo"/>';
         bleach.clean(dirty, {tags: TAG, attributes: ATTR}).should.equal(clean);
       });
     });
