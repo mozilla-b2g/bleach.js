@@ -59,6 +59,8 @@ describe('bleach', function () {
       });
     });
 
+    // And style/script tags; this is basic stuff; see test-style-tag.js for
+    // cases that care about styles more.
     describe('style/script tags', function() {
       // the regexp originally was greedy on which could do bad things.
       it('should not be too greedy', function() {
@@ -100,6 +102,13 @@ describe('bleach', function () {
           .should.equal(strippedDoubleStyle);
         bleach.clean(doubleStyle, {prune: ['style']})
           .should.equal(prunedDoubleStyle);
+      });
+
+      it('should handle multi-line styles', function() {
+        var styled =
+          '<style>color: red;\ncolor: blue;\ncolor: green;</style>foo';
+        bleach.clean(styled, { prune: ['style'] })
+          .should.equal('foo');
       });
     });
 

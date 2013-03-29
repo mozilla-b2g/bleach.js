@@ -15,7 +15,6 @@ describe('bleach', function () {
             '</style>',
             {
               tags: ['style'],
-              stripe: true,
               styles: ['color', 'background-color'],
             }
           ).should.equal(
