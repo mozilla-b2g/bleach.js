@@ -260,6 +260,17 @@ describe('bleach', function () {
         bleach.clean(style, { tags: ['style'], prune: ['style'] })
           .should.equal('before after');
       });
+
+      it('should not get confused by unbalanced tags while pruning',
+         function() {
+        var depth1 =
+              '<prune><bogus></prune>foo <b>bar</b>',
+            depth2 =
+              '<prune><bogus><prune><bogus></prune></prune>' +
+              'foo <b>bar</b>';
+        bleach.clean(depth1, { tags: ['b'], prune: ['prune'], strip: true })
+          .should.equal('foo <b>bar</b>');
+      });
     });
   });
 });
