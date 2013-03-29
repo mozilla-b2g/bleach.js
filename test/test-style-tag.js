@@ -20,8 +20,7 @@ describe('bleach', function () {
             }
           ).should.equal(
             '<style>' +
-            // whitespace roundtripping is implementation dependent...
-            'p {color: red; background-color: blue;}' +
+            'p { color: red; background-color: blue; }' +
             '</style>'
           );
       });

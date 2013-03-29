@@ -39,6 +39,25 @@ describe('bleach', function () {
       });
     });
 
+    // our SAXy parser had some sketchy issues with attributes
+    describe('nefariously quoted html attributes', function() {
+      it('should properly escape double-quotes', function() {
+        var singleQuoteWithDoubleQuotes =
+              "<abbr title='evil\" bad=\"moohaha'></abbr>",
+            escapedSingleQuoted =
+              '<abbr title="evil&quot; bad=&quot;moohaha"></abbr>';
+        bleach.clean(singleQuoteWithDoubleQuotes)
+          .should.equal(escapedSingleQuoted);
+
+        var unquotedWithEmbeddedDoubleQuotes =
+              '<abbr title=evil"lessbad></abbr>',
+            escapedUnquoted =
+              '<abbr title="evil&quot;lessbad"></abbr>';
+        bleach.clean(unquotedWithEmbeddedDoubleQuotes)
+          .should.equal(escapedUnquoted);
+      });
+    });
+
     describe('normalish html', function () {
       it('should do nothing to non-html string', function () {
         bleach.clean('no html string').should.equal('no html string');
@@ -147,7 +166,7 @@ describe('bleach', function () {
         var ATTR = ['style']
           , STYLE = ['color']
           , blank = '<b style=""></b>'
-          , s = '<b style="color: blue;"></b>';
+          , s = '<b style=" color: blue;"></b>';
         bleach.clean('<b style="top:0"></b>', {attributes: ATTR})
               .should.equal(blank);
         bleach.clean(s, {attributes: ATTR, styles: STYLE}).should.equal(s);
@@ -176,6 +195,25 @@ describe('bleach', function () {
           , dirty = 'both <em id="foo" style="color: black">can</em> have <img id="bar" src="foo"/>'
           , clean = 'both <em id="foo">can</em> have <img id="bar" src="foo"/>';
         bleach.clean(dirty, {tags: TAG, attributes: ATTR}).should.equal(clean);
+      });
+
+      it('should prune entire sub-trees when specified', function() {
+        var style = 'before <style>p { color: red; }</style>after';
+        bleach.clean(style, { prune: ['style'] })
+          .should.equal('before after');
+
+        var svgSansNS = '<svg><g>foo</g></svg>';
+        var svgWithNS = '<g:svg><g:g>foo</g></svg>';
+        bleach.clean(svgSansNS, { prune:['svg'] })
+          .should.equal('');
+        bleach.clean(svgWithNS, { prune:['svg'] })
+          .should.equal('');
+      });
+
+      it('should prioritize prune over legal tags', function() {
+        var style = 'before <style>p { color: red; }</style>after';
+        bleach.clean(style, { tags: ['style'], prune: ['style'] })
+          .should.equal('before after');
       });
     });
   });
