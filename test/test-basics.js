@@ -33,13 +33,14 @@ describe('bleach', function () {
         bleach.clean(htmlWithComment).should.equal('Just text');
       });
 
-      it('should not strip comment from html string if stripComments = false', function () {
+      it('should not strip comment from html string if stripComments = false',
+         function () {
         bleach.clean(htmlWithComment, {stripComments: false})
           .should.equal(htmlWithComment);
       });
     });
 
-    // our SAXy parser had some sketchy issues with attributes
+    // our parser had some sketchy issues with attributes
     describe('nefariously quoted html attributes', function() {
       it('should properly escape double-quotes', function() {
         var singleQuoteWithDoubleQuotes =
@@ -55,6 +56,50 @@ describe('bleach', function () {
               '<abbr title="evil&quot;lessbad"></abbr>';
         bleach.clean(unquotedWithEmbeddedDoubleQuotes)
           .should.equal(escapedUnquoted);
+      });
+    });
+
+    describe('style/script tags', function() {
+      // the regexp originally was greedy on which could do bad things.
+      it('should not be too greedy', function() {
+        // the greedy would indeed escape the <b> tags here.
+        var doubleStyle =
+              '<style>disappear </style>should <b>be</b> present' +
+              '<style> disappear2</style>',
+            escapedDoubleStyle =
+              '&lt;style&gt;disappear &lt;/style&gt;should <b>be</b> present' +
+              '&lt;style&gt; disappear2&lt;/style&gt;',
+            strippedDoubleStyle =
+              'disappear should <b>be</b> present disappear2',
+            prunedDoubleStyle =
+              'should <b>be</b> present';
+
+        bleach.clean(doubleStyle)
+          .should.equal(escapedDoubleStyle);
+        bleach.clean(doubleStyle, {strip: true})
+          .should.equal(strippedDoubleStyle);
+        bleach.clean(doubleStyle, {prune: ['style']})
+          .should.equal(prunedDoubleStyle);
+      });
+
+      it('should not let case-sensitivity make it too greedy', function() {
+        var doubleStyle =
+              '<style>disappear </STYLE>should <b>be</b> present' +
+              '<STYLE> disappear2</style>',
+            escapedDoubleStyle =
+              '&lt;style&gt;disappear &lt;/style&gt;should <b>be</b> present' +
+              '&lt;style&gt; disappear2&lt;/style&gt;',
+            strippedDoubleStyle =
+              'disappear should <b>be</b> present disappear2',
+            prunedDoubleStyle =
+              'should <b>be</b> present';
+
+        bleach.clean(doubleStyle)
+          .should.equal(escapedDoubleStyle);
+        bleach.clean(doubleStyle, {strip: true})
+          .should.equal(strippedDoubleStyle);
+        bleach.clean(doubleStyle, {prune: ['style']})
+          .should.equal(prunedDoubleStyle);
       });
     });
 
