@@ -3,7 +3,7 @@ var mocha = require('mocha'),
     path = require('path'),
     bleach = require('../'),
     should = require('should'),
-    names = ['nested-div', 'discard-style', 'bad-css-attr'],
+    names = ['nested-div', 'discard-style', 'bad-css-attr', 'entities', 'mdash'],
     snippets = [],
     options = {
       tags: [],
@@ -39,13 +39,12 @@ describe('bleach', function () {
 
     snippets.forEach(function (snippet) {
       it(snippet.name, function () {
-        var result = bleach.clean(snippet.source, options);
+        var result = bleach.unescapeHTMLEntities(bleach.clean(snippet.source, options));
         //console.log('----');
         //console.log(result);
         //console.log('----');
         result.should.equal(snippet.expected);
       });
     });
-
   });
 });
