@@ -166,10 +166,10 @@ describe('bleach', function () {
       });
 
       it('should convert bare entities to escaped entities', function () {
-        bleach.clean('an & entity').should.equal('an &amp; entity');
-        bleach.clean('an < entity').should.equal('an &lt; entity');
+        bleach.clean('an & entity').should.equal('an &#38; entity');
+        bleach.clean('an < entity').should.equal('an &#60; entity');
         bleach.clean('tag < <em>and</em> entity')
-              .should.equal('tag &lt; <em>and</em> entity');
+              .should.equal('tag &#60; <em>and</em> entity');
         bleach.clean('&amp;').should.equal('&amp;');
       });
 
@@ -193,7 +193,7 @@ describe('bleach', function () {
 
       it('should handle weird strings', function () {
         var s = '</3';
-        bleach.clean(s).should.equal('&lt;/3');
+        bleach.clean(s).should.equal('&#60;/3');
       });
 
       it('should strip the **** outta some tags', function () {
