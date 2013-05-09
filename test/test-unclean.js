@@ -4,7 +4,7 @@ var mocha = require('mocha'),
     exists = fs.existsSync || path.existsSync,
     bleach = require('../'),
     should = require('should'),
-    uncleanNames = ['bad-doctype', 'number-entity'],
+    uncleanNames = ['bad-doctype', 'number-entity', 'unicode'],
     unclean = [],
     options = {
       tags: [
