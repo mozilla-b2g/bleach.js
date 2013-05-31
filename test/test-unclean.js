@@ -4,7 +4,6 @@ var mocha = require('mocha'),
     exists = fs.existsSync || path.existsSync,
     bleach = require('../'),
     should = require('should'),
-    uncleanNames = ['bad-doctype', 'number-entity', 'unicode'],
     unclean = [],
     options = {
       tags: [
@@ -354,6 +353,17 @@ function stashLinks(lowerTag, attrs) {
   }
   return attrs;
 }
+
+var uncleanNames = [];
+function scanForTestfiles() {
+  var files = fs.readdirSync(path.join(__dirname, 'unclean'));
+  files.forEach(function(filename) {
+    var match = /^(.+)\.html$/.exec(filename);
+    if (match)
+      uncleanNames.push(match[1]);
+  });
+}
+scanForTestfiles();
 
 uncleanNames.forEach(function (name) {
   var sourcePath = path.join(__dirname , 'unclean', name) + '.html',

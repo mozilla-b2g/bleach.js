@@ -3,7 +3,6 @@ var mocha = require('mocha'),
     path = require('path'),
     bleach = require('../'),
     should = require('should'),
-    names = ['nested-div', 'discard-style', 'bad-css-attr', 'entities', 'mdash'],
     snippets = [],
     options = {
       tags: [],
@@ -22,6 +21,18 @@ var mocha = require('mocha'),
       asNode: true,
       maxLength: 100
     };
+
+
+var names = [];
+function scanForTestfiles() {
+  var files = fs.readdirSync(path.join(__dirname, 'snippets'));
+  files.forEach(function(filename) {
+    var match = /^(.+)\.html$/.exec(filename);
+    if (match)
+      names.push(match[1]);
+  });
+}
+scanForTestfiles();
 
 names.forEach(function (name) {
   var sourcePath = path.join(__dirname , 'snippets', name) + '.html',
