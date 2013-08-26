@@ -18,7 +18,7 @@ describe('bleach', function () {
       bleach.escapePlaintextIntoAttribute([
         'try">\'to escape'
       ].join('\n')).should.equal([
-        'try&#34;&#62;&#39;to&#32;escape'
+        'try&quot;&gt;&apos;to&#32;escape'
       ].join('\n'));
     });
   });
