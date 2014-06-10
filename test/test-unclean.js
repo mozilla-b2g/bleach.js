@@ -264,6 +264,7 @@ var mocha = require('mocha'),
 var RE_CID_URL = /^cid:/i;
 var RE_HTTP_URL = /^http(?:s)?/i;
 var RE_MAILTO_URL = /^mailto:/i;
+var RE_DATA_URL = /^data:/i;
 var RE_IMG_TAG = /^img$/;
 function getAttributeFromList(attrs, name) {
   var len = attrs.length;
@@ -316,6 +317,9 @@ function stashLinks(lowerTag, attrs) {
           classAttr.escaped += ' moz-external-image';
         else
           attrs.push({ name: 'class', escaped: 'moz-external-image' });
+      }
+      else if (RE_DATA_URL.test(srcAttr.escaped)){
+        srcAttr.safe = true;
       }
     }
   }
