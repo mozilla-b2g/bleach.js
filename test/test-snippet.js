@@ -10,7 +10,6 @@ var mocha = require('mocha'),
       stripComments: true,
       prune: [
         'style',
-        '!DOCTYPE',
         'button', // (forms)
         'datalist', // (forms)
         'script', // (script)
