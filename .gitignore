@@ -1,1 +1,5 @@
 node_modules
+test/tag-matching/output
+test/snippets/output
+test/unclean/output
+*~
