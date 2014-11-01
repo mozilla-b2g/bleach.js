@@ -1,9 +1,10 @@
 var mocha = require('mocha'),
     fs = require('fs'),
     path = require('path'),
+    exists = fs.existsSync || path.existsSync,
     bleach = require('../'),
     should = require('should'),
-    snippets = [],
+    dirscan = require('./dirscan'),
     options = {
       tags: [],
       strip: true,
@@ -21,39 +22,23 @@ var mocha = require('mocha'),
       maxLength: 100
     };
 
-
-var names = [];
-function scanForTestfiles() {
-  var files = fs.readdirSync(path.join(__dirname, 'snippets'));
-  files.forEach(function(filename) {
-    var match = /^(.+)\.html$/.exec(filename);
-    if (match)
-      names.push(match[1]);
-  });
-}
-scanForTestfiles();
-
-names.forEach(function (name) {
-  var sourcePath = path.join(__dirname , 'snippets', name) + '.html',
-      expectedPath = path.join(__dirname, 'snippets', 'expected', name) +
-                               '.html';
-  snippets.push({
-    name: name,
-    source: fs.readFileSync(sourcePath, 'utf8'),
-    expected: fs.readFileSync(expectedPath, 'utf8')
-  });
-});
-
 describe('bleach', function () {
   describe('snippets', function () {
 
-    snippets.forEach(function (snippet) {
-      it(snippet.name, function () {
-        var result = bleach.unescapeHTMLEntities(bleach.clean(snippet.source, options));
-        //console.log('----');
-        //console.log(result);
-        //console.log('----');
-        result.should.equal(snippet.expected);
+    var outPath = path.join(__dirname, 'snippets', 'output');
+    if (!exists(outPath)) {
+      fs.mkdirSync(outPath, 511);
+    }
+
+    dirscan('snippets').forEach(function (test) {
+      it(test.name, function () {
+        var result = bleach.unescapeHTMLEntities(bleach.clean(test.source, options));
+
+        // Write out file for our own inspection/diffs
+        fs.writeFileSync(path.join(outPath, test.name) + '.html',
+                         result, 'utf8');
+
+        result.should.equal(test.expected);
       });
     });
   });
