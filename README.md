@@ -1,31 +1,5 @@
-bleach.js is an INCOMPLETE port of Bleach (https://github.com/jsocol/bleach), the whitelist
-based HTML sanitizer.  It runs on node.js using jsdom, in the browser as a
-single file that contributes "Bleach" to the global environment, or as an AMD
-(Asynchronous Module Definition, https://github.com/amdjs/amdjs-api/wiki/AMD).
+A white-list based HTML/CSS sanitizer that is intended to run in a DOM worker where there is no access to the DOM.  The current intent of this library is to sanitize HTML messages for the Firefox OS Gaia email app.  You can learn more about its use-case at: https://github.com/mozilla-b2g/gaia-email-libs-and-more/blob/1cba504fa6729daa89454ccb275ea66ad29c4fab/js/htmlchew.js#L26
 
+The master branch of this repo was a main-thread implementation that uses the real DOM and its parsing super-powers.  It is frozen in time and you probably do not want to use it.  Instead, consider something like DOMpurify.js.
 
-
-## Tests ##
-
-To test, use mocha: http://visionmedia.github.com/mocha/
-
-Run "npm install -g mocha", then you can invoke "mocha" in the root dir
-to run the tests.
-
-Currently, all tests are ported from Bleach proper.  There are some cases where
-jsdom does not do the right thing according to the tests, and as a result, 3
-tests fail:
-
-- "bleach cleaning normalish html should strip out attributes" fails because
-  jsdom (as configured), wants to output XHTML tags for "br".
-
-- "bleach cleaning normalish html should convert bare entities to escaped entities"
-  fails because " < entity" gets fully corrected into a pair of start and end
-  tags.  This is not what the browser does, and so we're blaming jsdom.
-
-- "bleach cleaning normalish html should handle wildcard attributes" fails for
-  same XHTML reason on an img tag.
-
-TODO: Figure out how to get jsdom to do what we want here and/or file bugs
-and/or create patches to fix jsdom and/or switch to another node library or
-what not.
+Tests are implemented using mocha.
